@@ -1,14 +1,21 @@
 clc;
 
-% 參數設定
+% set parameter
+
 % BS parameter (dBm)
 E = 5;
 T = -110;
 Pt = -50;
 Pmin = -125;
+BSX = [750,2250,2250,750];
+BSY = [750,750,2250,2250];
+
 % car parameter
 poisson = 1/30;
-v = 10 ;% m/s
+v = 10; % m/s
+total_car = 0;
+total_power = 0;
+
 % direction probability: s-stright, r-right, l-left
 direction = ['s','s','s','r','r','l'];
 directionS = ['s','s','s','w','w','e'];
@@ -16,7 +23,7 @@ directionW = ['w','w','w','n','n','s'];
 directionN = ['n','n','n','e','e','w'];
 directionE = ['e','e','e','s','s','n'];
 
-%car = struct('x',{},'y',{},'direction',{},'in',{},'BS',{},'power',{});
+% car data
 car_x = zeros(1,2000);
 car_y = zeros(1,2000);
 car_direction = zeros(1,2000);
@@ -24,14 +31,14 @@ car_in = zeros(1,2000);
 car_BS = zeros(1,2000);
 car_power = zeros(1,2000);
 
+% 12 entry data
 entryX = [750,1500,2250,3000,3000,3000,2250,1500,750,0,0,0];
 entryY = [0,0,0,750,1500,2250,3000,3000,3000,2250,1500,750];
 entryD = ['s','s','s','w','w','w','n','n','n','e','e','e'];
 
-BSX = [750,2250,2250,750];
-BSY = [750,750,2250,2250];
+% calculate number of handoff
+HandoffNum = zeros(1, 86400);
 
-HandoffNum = zeros(1, 86400);%00);
 for i=1:86400
     P = ((poisson*1)*exp((-poisson)*1));
     for j=1:12
@@ -47,6 +54,7 @@ for i=1:86400
             car_y(carnum) = entryY(j);
             car_direction(carnum) = entryD(j);
             car_in(carnum) = 1;
+            total_car = total_car+1;
             
             % choose BS
             % direction to BS
@@ -96,8 +104,6 @@ for i=1:86400
                 end
                 car_power(carnum) = Pt-10-20*log10(D_BS4);
             end
-            %disp(car(carnum+1).BS);
-            %disp(car(carnum+1).power);
         end
     end
     
@@ -123,11 +129,7 @@ for i=1:86400
             else
                 car_power(j) = P_BS4;
             end
-            %disp(car(j).power);
-            %disp(P_BS1);
-            %disp(P_BS2);
-            %disp(P_BS3);
-            %disp(P_BS4);
+            
             % choose the best one, if Pnew>Pold, choose Pnew
             if P_BS1 > car_power(j)
                 car_BS(j) = 1;
@@ -146,7 +148,7 @@ for i=1:86400
                 car_power(j) = P_BS4;
                 HandoffNum(i) = HandoffNum(i)+1;
             end
-            %disp(car(j).power);
+            total_power = total_power+car_power(j);
         end
     end
     
@@ -327,19 +329,10 @@ for i=1:86400
         end
     end
     
-    %for j=1:length(car)
-    %    if car(j).in==0
-    %        car(j) = [];
-    %    end
-    %end
-    %disp(car(1).x);
-    %disp(car(1).y);
-    %fprintf('%d %d %c\n',car(5).x, car(5).y, car(5).direction);
-    
     if i>1
         HandoffNum(i) =  HandoffNum(i)+HandoffNum(i-1);
     end
-    disp(HandoffNum(i));
 end
 
 bar(HandoffNum)
+avg_power = total_power/(86400*total_car);
