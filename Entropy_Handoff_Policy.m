@@ -103,7 +103,15 @@ for i=1:86400
             pers_total_power = pers_total_power+car_power(j);
             
             if car_direction(j) == 's'
-                if car_y(j)<=3000 && car_y(j)+v>3000
+                if car_y(j)<=3000 && car_y(j)+v>3000 && car_x(j)==0
+                    car_direction(j) = directionS(6);
+                    car_x(j) = car_x(j) + (v-(3000-car_y(j))); 
+                    car_y(j) = 3000;
+                elseif car_y(j)<=3000 && car_y(j)+v>3000 && car_x(j)==3000
+                    car_direction(j) = directionS(4);
+                    car_x(j) = car_x(j) - (v-(3000-car_y(j)));
+                    car_y(j) = 3000;
+                elseif car_y(j)<=3000 && car_y(j)+v>3000
                     % car out
                     car_in(j) = 0;
                 elseif car_y(j)<=2250 && car_y(j)+v>2250
@@ -142,11 +150,31 @@ for i=1:86400
                     else
                         car_y(j) = car_y(j) + v;
                     end
+                elseif car_y(j)==0
+                    d = randi(6);
+                    car_direction(j) = directionS(d);
+                    if direction(d) == 'r'
+                        car_x(j) = car_x(j) - v;
+                        car_y(j) = 0;
+                    elseif direction(d) == 'l'
+                        car_x(j) = car_x(j) + v; 
+                        car_y(j) = 0;
+                    else
+                        car_y(j) = car_y(j) + v;
+                    end
                 else
                     car_y(j) = car_y(j) + v;
                 end
             elseif car_direction(j) == 'w'
-                if car_x(j)>=0 && car_x(j)-v<0
+                if car_x(j)>=0 && car_x(j)-v<0 && car_y(j)==0
+                    car_direction(j) = directionW(6);
+                    car_y(j) = car_y(j) + (v-(car_x(j)-0));
+                    car_x(j) = 0;
+                elseif car_x(j)>=0 && car_x(j)-v<0 && car_y(j)==3000
+                    car_direction(j) = directionW(4);
+                    car_y(j) = car_y(j) - (v-(car_x(j)-0));
+                    car_x(j) = 0;
+                elseif car_x(j)>=0 && car_x(j)-v<0
                     % car out
                     car_in(j) = 0;
                 elseif car_x(j)>=750 && car_x(j)-v<750
@@ -185,11 +213,31 @@ for i=1:86400
                     else
                         car_x(j) = car_x(j) - v;
                     end
+                elseif car_x(j)==3000
+                    d = randi(6);
+                    car_direction(j) = directionW(d);
+                    if direction(d) == 'r'
+                        car_y(j) = car_y(j) - v;
+                        car_x(j) = 3000;
+                    elseif direction(d) == 'l'
+                        car_y(j) = car_y(j) + v;
+                        car_x(j) = 3000;
+                    else
+                        car_x(j) = car_x(j) - v;
+                    end
                 else
                     car_x(j) = car_x(j) - v;
                 end
             elseif car_direction(j) == 'n'
-                if car_y(j)>=0 && car_y(j)-v<0
+                if car_y(j)>=0 && car_y(j)-v<0 && car_x(j)==0
+                    car_direction(j) = directionN(4);
+                    car_x(j) = car_x(j) + (v-(car_y(j)-0));
+                    car_y(j)= 0;
+                elseif car_y(j)>=0 && car_y(j)-v<0 && car_x(j)==3000
+                    car_direction(j) = directionN(6);
+                    car_x(j) = car_x(j) - (v-(car_y(j)-0)); 
+                    car_y(j) = 0;
+                elseif car_y(j)>=0 && car_y(j)-v<0
                     % car out
                     car_in(j) = 0;
                 elseif car_y(j)>=750 && car_y(j)-v<750
@@ -228,11 +276,31 @@ for i=1:86400
                     else
                         car_y(j) = car_y(j) - v;
                     end
+                elseif car_y(j)==3000
+                    d = randi(6);
+                    car_direction(j) = directionN(d);
+                    if direction(d) == 'r'
+                        car_x(j) = car_x(j) + v;
+                        car_y(j) = 3000;
+                    elseif direction(d) == 'l'
+                        car_x(j) = car_x(j) - v; 
+                        car_y(j) = 3000;
+                    else
+                        car_y(j) = car_y(j) - v;
+                    end
                 else
                     car_y(j) = car_y(j) - v;
                 end
             elseif car_direction(j) == 'e'
-                if car_x(j)<=3000 && car_x(j)+v>3000
+                if car_x(j)<=3000 && car_x(j)+v>3000 && car_y(j)==0
+                    car_direction(j) = directionE(4);
+                    car_y(j) = car_y(j) + (v-(3000-car_x(j)));
+                    car_x(j) = 3000;
+                elseif car_x(j)<=3000 && car_x(j)+v>3000 && car_y(j)==3000
+                    car_direction(j) = directionE(6);
+                    car_y(j) = car_y(j) - (v-(3000-car_x(j)));
+                    car_x(j) = 3000;
+                elseif car_x(j)<=3000 && car_x(j)+v>3000
                     % car out
                     car_in(j) = 0;
                 elseif car_x(j)<=2250 && car_x(j)+v>=2250
@@ -268,6 +336,18 @@ for i=1:86400
                     elseif direction(d) == 'l'
                         car_y(j) = car_y(j) - (v-(750-car_x(j)));
                         car_x(j) = 750;
+                    else
+                        car_x(j) = car_x(j) + v;
+                    end
+                elseif car_x(j)==0
+                    d = randi(6);
+                    car_direction(j) = directionE(d);
+                    if direction(d) == 'r'
+                        car_y(j) = car_y(j) + v;
+                        car_x(j) = 0;
+                    elseif direction(d) == 'l'
+                        car_y(j) = car_y(j) - v;
+                        car_x(j) = 0;
                     else
                         car_x(j) = car_x(j) + v;
                     end
@@ -364,5 +444,9 @@ for i=1:86400
     end
 end
 
-bar(HandoffNum)
+bar(HandoffNum);
+title('Entropy Handoff');
+xlabel('second');
+ylabel('number of handoff');
 avg_power = total_power/86400;
+disp(avg_power);

@@ -31,6 +31,8 @@ car_direction = zeros(1,2500);
 car_in = zeros(1,2500);
 car_BS = zeros(1,2500);
 car_power = zeros(1,2500);
+car_NewBS = zeros(1,2500);
+car_NewPower = zeros(1,2500);
 
 % 12 entry data
 entryX = [750,1500,2250,3000,3000,3000,2250,1500,750,0,0,0];
@@ -82,23 +84,47 @@ for i=1:86400
                 car_power(j) = P_BS4;
             end
             
-            % choose the best one, if Pnew>Pold, choose Pnew
-            if P_BS1>car_power(j) && P_BS1>=P_BS2 && P_BS1>=P_BS3 && P_BS1>=P_BS4
-                car_BS(j) = 1;
-                car_power(j) = P_BS1;
-                HandoffNum(i) = HandoffNum(i)+1;
-            elseif P_BS2>car_power(j) && P_BS2>=P_BS1 && P_BS2>=P_BS3 && P_BS2>=P_BS4
-                car_BS(j) = 2;
-                car_power(j) = P_BS2;
-                HandoffNum(i) = HandoffNum(i)+1;
-            elseif P_BS3>car_power(j) && P_BS3>=P_BS1 && P_BS3>=P_BS1 && P_BS3>=P_BS4
-                car_BS(j) = 3;
-                car_power(j) = P_BS3;
-                HandoffNum(i) = HandoffNum(i)+1;
-            elseif P_BS4>car_power(j) && P_BS4>=P_BS1 && P_BS4>=P_BS2 && P_BS4>=P_BS3
-                car_BS(j) = 4;
-                car_power(j) = P_BS4;
-                HandoffNum(i) = HandoffNum(i)+1;
+            % if Pnew>Pold last 1 s, choose Pnew
+            if P_BS1>car_power(j) && P_BS1>=P_BS2 && P_BS1>=P_BS3 && P_BS1>=P_BS4 && P_BS1>car_NewPower(j)
+                if car_NewBS(j) == 1
+                    car_BS(j) = 1;
+                    car_power(j) = P_BS1;
+                    car_NewBS(j) = 0;
+                    HandoffNum(i) = HandoffNum(i)+1;
+                else
+                    car_NewPower(j) = P_BS1;
+                    car_NewBS(j) = 1;
+                end
+            elseif P_BS2>car_power(j) && P_BS2>=P_BS1 && P_BS2>=P_BS3 && P_BS2>=P_BS4 && P_BS2>car_NewPower(j)
+                if car_NewBS(j) == 2
+                    car_BS(j) = 2;
+                    car_power(j) = P_BS2;
+                    car_NewBS(j) = 0;
+                    HandoffNum(i) = HandoffNum(i)+1;
+                else
+                    car_NewPower(j) = P_BS2;
+                    car_NewBS(j) = 2;
+                end
+            elseif P_BS3>car_power(j) && P_BS3>=P_BS1 && P_BS3>=P_BS1 && P_BS3>=P_BS4 && P_BS3>car_NewPower(j)
+                if car_NewBS(j) == 3
+                    car_BS(j) = 3;
+                    car_power(j) = P_BS3;
+                    car_NewBS(j) = 0;
+                    HandoffNum(i) = HandoffNum(i)+1;
+                else
+                    car_NewPower(j) = P_BS3;
+                    car_NewBS(j) = 3;
+                end
+            elseif P_BS4>car_power(j) && P_BS4>=P_BS1 && P_BS4>=P_BS2 && P_BS4>=P_BS3 && P_BS4>car_NewPower(j)
+                if car_NewBS(j) == 4
+                    car_BS(j) = 4;
+                    car_power(j) = P_BS4;
+                    car_NewBS(j) = 0;
+                    HandoffNum(i) = HandoffNum(i)+1;
+                else
+                    car_NewPower(j) = P_BS4;
+                    car_NewBS(j) = 4;
+                end
             end
             pers_total_power = pers_total_power+car_power(j);
             
@@ -383,6 +409,7 @@ for i=1:86400
             car_y(carnum) = entryY(j);
             car_direction(carnum) = entryD(j);
             car_in(carnum) = 1;
+            car_NewPower(carnum) = Pmin;
             
             % choose BS
             % direction to BS
@@ -445,7 +472,7 @@ for i=1:86400
 end
 
 bar(HandoffNum);
-title('Best Handoff');
+title('My Handoff');
 xlabel('second');
 ylabel('number of handoff');
 avg_power = total_power/86400;
