@@ -85,45 +85,109 @@ for i=1:86400
             end
             
             % if Pnew>Pold last 1 s, choose Pnew
-            if P_BS1>car_power(j) && P_BS1>=P_BS2 && P_BS1>=P_BS3 && P_BS1>=P_BS4 && P_BS1>car_NewPower(j)
-                if car_NewBS(j) == 1
+            if P_BS1>car_power(j) && P_BS1>P_BS2 && P_BS1>P_BS3 && P_BS1>P_BS4 && (P_BS1>car_NewPower(j) || car_power(j)<Pmin)
+                if car_NewBS(j)==1 || car_power(j)<Pmin
                     car_BS(j) = 1;
                     car_power(j) = P_BS1;
                     car_NewBS(j) = 0;
+                    car_NewPower(j) = Pmin;
                     HandoffNum(i) = HandoffNum(i)+1;
                 else
                     car_NewPower(j) = P_BS1;
                     car_NewBS(j) = 1;
                 end
-            elseif P_BS2>car_power(j) && P_BS2>=P_BS1 && P_BS2>=P_BS3 && P_BS2>=P_BS4 && P_BS2>car_NewPower(j)
-                if car_NewBS(j) == 2
+            elseif P_BS2>car_power(j) && P_BS2>P_BS1 && P_BS2>P_BS3 && P_BS2>P_BS4 && (P_BS2>car_NewPower(j) || car_power(j)<Pmin)
+                if car_NewBS(j) == 2 || car_power(j)<Pmin
                     car_BS(j) = 2;
                     car_power(j) = P_BS2;
                     car_NewBS(j) = 0;
+                    car_NewPower(j) = Pmin;
                     HandoffNum(i) = HandoffNum(i)+1;
                 else
                     car_NewPower(j) = P_BS2;
                     car_NewBS(j) = 2;
                 end
-            elseif P_BS3>car_power(j) && P_BS3>=P_BS1 && P_BS3>=P_BS1 && P_BS3>=P_BS4 && P_BS3>car_NewPower(j)
-                if car_NewBS(j) == 3
+            elseif P_BS3>car_power(j) && P_BS3>P_BS1 && P_BS3>P_BS2 && P_BS3>P_BS4 && (P_BS3>car_NewPower(j) || car_power(j)<Pmin)
+                if car_NewBS(j) == 3 || car_power(j)<Pmin
                     car_BS(j) = 3;
                     car_power(j) = P_BS3;
                     car_NewBS(j) = 0;
+                    car_NewPower(j) = Pmin;
                     HandoffNum(i) = HandoffNum(i)+1;
                 else
                     car_NewPower(j) = P_BS3;
                     car_NewBS(j) = 3;
                 end
-            elseif P_BS4>car_power(j) && P_BS4>=P_BS1 && P_BS4>=P_BS2 && P_BS4>=P_BS3 && P_BS4>car_NewPower(j)
-                if car_NewBS(j) == 4
+            elseif P_BS4>car_power(j) && P_BS4>P_BS1 && P_BS4>P_BS2 && P_BS4>P_BS3 && (P_BS4>car_NewPower(j) || car_power(j)<Pmin)
+                if car_NewBS(j) == 4 || car_power(j)<Pmin
                     car_BS(j) = 4;
                     car_power(j) = P_BS4;
                     car_NewBS(j) = 0;
+                    car_NewPower(j) = Pmin;
                     HandoffNum(i) = HandoffNum(i)+1;
                 else
                     car_NewPower(j) = P_BS4;
                     car_NewBS(j) = 4;
+                end
+            elseif P_BS1>car_power(j) && P_BS1==P_BS2 && P_BS1>P_BS3 && (P_BS1>car_NewPower(j) || car_power(j)<Pmin)
+                if car_NewBS(j)==12 || car_power(j)<Pmin
+                    if rand>=0.5
+                        car_BS(j) = 1;
+                    else
+                        car_BS(j) = 2;
+                    end
+                    car_power(j) = P_BS1;
+                    car_NewBS(j) = 0;
+                    car_NewPower(j) = Pmin;
+                    HandoffNum(i) = HandoffNum(i)+1;
+                else
+                    car_NewPower(j) = P_BS1;
+                    car_NewBS(j) = 12;
+                end
+            elseif P_BS2>car_power(j) && P_BS2==P_BS3 && P_BS2>P_BS4 && (P_BS2>car_NewPower(j) || car_power(j)<Pmin)
+                if car_NewBS(j)==23 || car_power(j)<Pmin
+                    if rand>=0.5
+                        car_BS(j) = 2;
+                    else
+                        car_BS(j) = 3;
+                    end
+                    car_power(j) = P_BS2;
+                    car_NewBS(j) = 0;
+                    car_NewPower(j) = Pmin;
+                    HandoffNum(i) = HandoffNum(i)+1;
+                else
+                    car_NewPower(j) = P_BS2;
+                    car_NewBS(j) = 23;
+                end
+            elseif P_BS3>car_power(j) && P_BS3>P_BS2 && P_BS3==P_BS4 && (P_BS3>car_NewPower(j) || car_power(j)<Pmin)
+                if car_NewBS(j)==34 || car_power(j)<Pmin
+                    if rand>=0.5
+                        car_BS(j) = 3;
+                    else
+                        car_BS(j) = 4;
+                    end
+                    car_power(j) = P_BS3;
+                    car_NewBS(j) = 0;
+                    car_NewPower(j) = Pmin;
+                    HandoffNum(i) = HandoffNum(i)+1;
+                else
+                    car_NewPower(j) = P_BS3;
+                    car_NewBS(j) = 34;
+                end
+            elseif P_BS4>car_power(j) && P_BS4==P_BS1 && P_BS4>P_BS2 && (P_BS4>car_NewPower(j) || car_power(j)<Pmin)
+                if car_NewBS(j)==14 || car_power(j)<Pmin
+                    if rand>=0.5
+                        car_BS(j) = 1;
+                    else
+                        car_BS(j) = 4;
+                    end
+                    car_power(j) = P_BS1;
+                    car_NewBS(j) = 0;
+                    car_NewPower(j) = Pmin;
+                    HandoffNum(i) = HandoffNum(i)+1;
+                else
+                    car_NewPower(j) = P_BS1;
+                    car_NewBS(j) = 14;
                 end
             end
             pers_total_power = pers_total_power+car_power(j);

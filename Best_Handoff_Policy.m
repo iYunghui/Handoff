@@ -83,21 +83,53 @@ for i=1:86400
             end
             
             % choose the best one, if Pnew>Pold, choose Pnew
-            if P_BS1>car_power(j) && P_BS1>=P_BS2 && P_BS1>=P_BS3 && P_BS1>=P_BS4
+            if P_BS1>car_power(j) && P_BS1>P_BS2 && P_BS1>P_BS3 && P_BS1>P_BS4
                 car_BS(j) = 1;
                 car_power(j) = P_BS1;
                 HandoffNum(i) = HandoffNum(i)+1;
-            elseif P_BS2>car_power(j) && P_BS2>=P_BS1 && P_BS2>=P_BS3 && P_BS2>=P_BS4
+            elseif P_BS2>car_power(j) && P_BS2>P_BS1 && P_BS2>P_BS3 && P_BS2>P_BS4
                 car_BS(j) = 2;
                 car_power(j) = P_BS2;
                 HandoffNum(i) = HandoffNum(i)+1;
-            elseif P_BS3>car_power(j) && P_BS3>=P_BS1 && P_BS3>=P_BS1 && P_BS3>=P_BS4
+            elseif P_BS3>car_power(j) && P_BS3>P_BS1 && P_BS3>P_BS1 && P_BS3>P_BS4
                 car_BS(j) = 3;
                 car_power(j) = P_BS3;
                 HandoffNum(i) = HandoffNum(i)+1;
-            elseif P_BS4>car_power(j) && P_BS4>=P_BS1 && P_BS4>=P_BS2 && P_BS4>=P_BS3
+            elseif P_BS4>car_power(j) && P_BS4>P_BS1 && P_BS4>P_BS2 && P_BS4>P_BS3
                 car_BS(j) = 4;
                 car_power(j) = P_BS4;
+                HandoffNum(i) = HandoffNum(i)+1;
+            elseif P_BS1>car_power(j) && P_BS1==P_BS2 && P_BS1>P_BS3
+                if rand>=0.5
+                    car_BS(j) = 1;
+                else
+                    car_BS(j) = 2;
+                end
+                car_power(j) = P_BS1;
+                HandoffNum(i) = HandoffNum(i)+1;
+            elseif P_BS2>car_power(j) && P_BS2==P_BS3 && P_BS2>P_BS4
+                if rand>=0.5
+                    car_BS(j) = 2;
+                else
+                    car_BS(j) = 3;
+                end
+                car_power(j) = P_BS2;
+                HandoffNum(i) = HandoffNum(i)+1;
+            elseif P_BS3>car_power(j) && P_BS3==P_BS4 && P_BS3>P_BS2
+                if rand>=0.5
+                    car_BS(j) = 3;
+                else
+                    car_BS(j) = 4;
+                end
+                car_power(j) = P_BS3;
+                HandoffNum(i) = HandoffNum(i)+1;
+            elseif P_BS4>car_power(j) && P_BS4==P_BS1 && P_BS4>P_BS2
+                if rand>=0.5
+                    car_BS(j) = 1;
+                else
+                    car_BS(j) = 4;
+                end
+                car_power(j) = P_BS1;
                 HandoffNum(i) = HandoffNum(i)+1;
             end
             pers_total_power = pers_total_power+car_power(j);
