@@ -2,7 +2,7 @@ clc;
 
 % set parameter
 % BS parameter (dBm)
-E = 5;
+E = 10;
 T = -110;
 Pt = -50;
 Pmin = -125;
@@ -31,8 +31,6 @@ car_direction = zeros(1,2500);
 car_in = zeros(1,2500);
 car_BS = zeros(1,2500);
 car_power = zeros(1,2500);
-car_NewBS = zeros(1,2500);
-car_NewPower = zeros(1,2500);
 
 % 12 entry data
 entryX = [750,1500,2250,3000,3000,3000,2250,1500,750,0,0,0];
@@ -84,124 +82,30 @@ for i=1:86400
                 car_power(j) = P_BS4;
             end
             
-            % if Pnew>Pold last 1 s, choose Pnew
-            if P_BS1>car_power(j) && P_BS1>P_BS2 && P_BS1>P_BS3 && P_BS1>P_BS4 && (P_BS1>car_NewPower(j) || car_power(j)<Pmin)
-                if car_NewBS(j)==1 || car_power(j)<Pmin
+            % choose Pnew if Pnew>Pold+E and Pold<T
+            if car_power(j) < T
+                if (P_BS1>car_power(j)+E && P_BS1>=P_BS2 && P_BS1>=P_BS3 && P_BS1>=P_BS4) || (P_BS1>car_power(j) && car_power(j)<Pmin)
                     car_BS(j) = 1;
                     car_power(j) = P_BS1;
-                    car_NewBS(j) = 0;
-                    car_NewPower(j) = Pmin;
                     HandoffNum(i) = HandoffNum(i)+1;
-                else
-                    car_NewPower(j) = P_BS1;
-                    car_NewBS(j) = 1;
-                end
-            elseif P_BS2>car_power(j) && P_BS2>P_BS1 && P_BS2>P_BS3 && P_BS2>P_BS4 && (P_BS2>car_NewPower(j) || car_power(j)<Pmin)
-                if car_NewBS(j) == 2 || car_power(j)<Pmin
+                elseif P_BS2>car_power(j)+E && P_BS2>=P_BS1 && P_BS2>=P_BS3 && P_BS2>=P_BS4 || (P_BS2>car_power(j) && car_power(j)<Pmin)
                     car_BS(j) = 2;
                     car_power(j) = P_BS2;
-                    car_NewBS(j) = 0;
-                    car_NewPower(j) = Pmin;
                     HandoffNum(i) = HandoffNum(i)+1;
-                else
-                    car_NewPower(j) = P_BS2;
-                    car_NewBS(j) = 2;
-                end
-            elseif P_BS3>car_power(j) && P_BS3>P_BS1 && P_BS3>P_BS2 && P_BS3>P_BS4 && (P_BS3>car_NewPower(j) || car_power(j)<Pmin)
-                if car_NewBS(j) == 3 || car_power(j)<Pmin
+                elseif P_BS3>car_power(j)+E && P_BS3>=P_BS1 && P_BS3>=P_BS1 && P_BS3>=P_BS4 || (P_BS3>car_power(j) && car_power(j)<Pmin)
                     car_BS(j) = 3;
                     car_power(j) = P_BS3;
-                    car_NewBS(j) = 0;
-                    car_NewPower(j) = Pmin;
                     HandoffNum(i) = HandoffNum(i)+1;
-                else
-                    car_NewPower(j) = P_BS3;
-                    car_NewBS(j) = 3;
-                end
-            elseif P_BS4>car_power(j) && P_BS4>P_BS1 && P_BS4>P_BS2 && P_BS4>P_BS3 && (P_BS4>car_NewPower(j) || car_power(j)<Pmin)
-                if car_NewBS(j) == 4 || car_power(j)<Pmin
+                elseif P_BS4>car_power(j)+E && P_BS4>=P_BS1 && P_BS4>=P_BS2 && P_BS4>=P_BS3 || (P_BS4>car_power(j) && car_power(j)<Pmin)
                     car_BS(j) = 4;
                     car_power(j) = P_BS4;
-                    car_NewBS(j) = 0;
-                    car_NewPower(j) = Pmin;
                     HandoffNum(i) = HandoffNum(i)+1;
-                else
-                    car_NewPower(j) = P_BS4;
-                    car_NewBS(j) = 4;
-                end
-            elseif P_BS1>car_power(j) && P_BS1==P_BS2 && P_BS1>P_BS3 && (P_BS1>car_NewPower(j) || car_power(j)<Pmin)
-                if car_NewBS(j)==12 || car_power(j)<Pmin
-                    if rand>=0.5
-                        car_BS(j) = 1;
-                    else
-                        car_BS(j) = 2;
-                    end
-                    car_power(j) = P_BS1;
-                    car_NewBS(j) = 0;
-                    car_NewPower(j) = Pmin;
-                    HandoffNum(i) = HandoffNum(i)+1;
-                else
-                    car_NewPower(j) = P_BS1;
-                    car_NewBS(j) = 12;
-                end
-            elseif P_BS2>car_power(j) && P_BS2==P_BS3 && P_BS2>P_BS4 && (P_BS2>car_NewPower(j) || car_power(j)<Pmin)
-                if car_NewBS(j)==23 || car_power(j)<Pmin
-                    if rand>=0.5
-                        car_BS(j) = 2;
-                    else
-                        car_BS(j) = 3;
-                    end
-                    car_power(j) = P_BS2;
-                    car_NewBS(j) = 0;
-                    car_NewPower(j) = Pmin;
-                    HandoffNum(i) = HandoffNum(i)+1;
-                else
-                    car_NewPower(j) = P_BS2;
-                    car_NewBS(j) = 23;
-                end
-            elseif P_BS3>car_power(j) && P_BS3>P_BS2 && P_BS3==P_BS4 && (P_BS3>car_NewPower(j) || car_power(j)<Pmin)
-                if car_NewBS(j)==34 || car_power(j)<Pmin
-                    if rand>=0.5
-                        car_BS(j) = 3;
-                    else
-                        car_BS(j) = 4;
-                    end
-                    car_power(j) = P_BS3;
-                    car_NewBS(j) = 0;
-                    car_NewPower(j) = Pmin;
-                    HandoffNum(i) = HandoffNum(i)+1;
-                else
-                    car_NewPower(j) = P_BS3;
-                    car_NewBS(j) = 34;
-                end
-            elseif P_BS4>car_power(j) && P_BS4==P_BS1 && P_BS4>P_BS2 && (P_BS4>car_NewPower(j) || car_power(j)<Pmin)
-                if car_NewBS(j)==14 || car_power(j)<Pmin
-                    if rand>=0.5
-                        car_BS(j) = 1;
-                    else
-                        car_BS(j) = 4;
-                    end
-                    car_power(j) = P_BS1;
-                    car_NewBS(j) = 0;
-                    car_NewPower(j) = Pmin;
-                    HandoffNum(i) = HandoffNum(i)+1;
-                else
-                    car_NewPower(j) = P_BS1;
-                    car_NewBS(j) = 14;
                 end
             end
             pers_total_power = pers_total_power+car_power(j);
             
             if car_direction(j) == 's'
-                if car_y(j)<=3000 && car_y(j)+v>3000 && car_x(j)==0
-                    car_direction(j) = directionS(6);
-                    car_x(j) = car_x(j) + (v-(3000-car_y(j))); 
-                    car_y(j) = 3000;
-                elseif car_y(j)<=3000 && car_y(j)+v>3000 && car_x(j)==3000
-                    car_direction(j) = directionS(4);
-                    car_x(j) = car_x(j) - (v-(3000-car_y(j)));
-                    car_y(j) = 3000;
-                elseif car_y(j)<=3000 && car_y(j)+v>3000
+                if car_y(j)<=3000 && car_y(j)+v>3000
                     % car out
                     car_in(j) = 0;
                 elseif car_y(j)<=2250 && car_y(j)+v>2250
@@ -240,31 +144,11 @@ for i=1:86400
                     else
                         car_y(j) = car_y(j) + v;
                     end
-                elseif car_y(j)==0
-                    d = randi(6);
-                    car_direction(j) = directionS(d);
-                    if direction(d) == 'r'
-                        car_x(j) = car_x(j) - v;
-                        car_y(j) = 0;
-                    elseif direction(d) == 'l'
-                        car_x(j) = car_x(j) + v; 
-                        car_y(j) = 0;
-                    else
-                        car_y(j) = car_y(j) + v;
-                    end
                 else
                     car_y(j) = car_y(j) + v;
                 end
             elseif car_direction(j) == 'w'
-                if car_x(j)>=0 && car_x(j)-v<0 && car_y(j)==0
-                    car_direction(j) = directionW(6);
-                    car_y(j) = car_y(j) + (v-(car_x(j)-0));
-                    car_x(j) = 0;
-                elseif car_x(j)>=0 && car_x(j)-v<0 && car_y(j)==3000
-                    car_direction(j) = directionW(4);
-                    car_y(j) = car_y(j) - (v-(car_x(j)-0));
-                    car_x(j) = 0;
-                elseif car_x(j)>=0 && car_x(j)-v<0
+                if car_x(j)>=0 && car_x(j)-v<0
                     % car out
                     car_in(j) = 0;
                 elseif car_x(j)>=750 && car_x(j)-v<750
@@ -303,31 +187,11 @@ for i=1:86400
                     else
                         car_x(j) = car_x(j) - v;
                     end
-                elseif car_x(j)==3000
-                    d = randi(6);
-                    car_direction(j) = directionW(d);
-                    if direction(d) == 'r'
-                        car_y(j) = car_y(j) - v;
-                        car_x(j) = 3000;
-                    elseif direction(d) == 'l'
-                        car_y(j) = car_y(j) + v;
-                        car_x(j) = 3000;
-                    else
-                        car_x(j) = car_x(j) - v;
-                    end
                 else
                     car_x(j) = car_x(j) - v;
                 end
             elseif car_direction(j) == 'n'
-                if car_y(j)>=0 && car_y(j)-v<0 && car_x(j)==0
-                    car_direction(j) = directionN(4);
-                    car_x(j) = car_x(j) + (v-(car_y(j)-0));
-                    car_y(j)= 0;
-                elseif car_y(j)>=0 && car_y(j)-v<0 && car_x(j)==3000
-                    car_direction(j) = directionN(6);
-                    car_x(j) = car_x(j) - (v-(car_y(j)-0)); 
-                    car_y(j) = 0;
-                elseif car_y(j)>=0 && car_y(j)-v<0
+                if car_y(j)>=0 && car_y(j)-v<0
                     % car out
                     car_in(j) = 0;
                 elseif car_y(j)>=750 && car_y(j)-v<750
@@ -366,31 +230,11 @@ for i=1:86400
                     else
                         car_y(j) = car_y(j) - v;
                     end
-                elseif car_y(j)==3000
-                    d = randi(6);
-                    car_direction(j) = directionN(d);
-                    if direction(d) == 'r'
-                        car_x(j) = car_x(j) + v;
-                        car_y(j) = 3000;
-                    elseif direction(d) == 'l'
-                        car_x(j) = car_x(j) - v; 
-                        car_y(j) = 3000;
-                    else
-                        car_y(j) = car_y(j) - v;
-                    end
                 else
                     car_y(j) = car_y(j) - v;
                 end
             elseif car_direction(j) == 'e'
-                if car_x(j)<=3000 && car_x(j)+v>3000 && car_y(j)==0
-                    car_direction(j) = directionE(4);
-                    car_y(j) = car_y(j) + (v-(3000-car_x(j)));
-                    car_x(j) = 3000;
-                elseif car_x(j)<=3000 && car_x(j)+v>3000 && car_y(j)==3000
-                    car_direction(j) = directionE(6);
-                    car_y(j) = car_y(j) - (v-(3000-car_x(j)));
-                    car_x(j) = 3000;
-                elseif car_x(j)<=3000 && car_x(j)+v>3000
+                if car_x(j)<=3000 && car_x(j)+v>3000
                     % car out
                     car_in(j) = 0;
                 elseif car_x(j)<=2250 && car_x(j)+v>=2250
@@ -429,18 +273,6 @@ for i=1:86400
                     else
                         car_x(j) = car_x(j) + v;
                     end
-                elseif car_x(j)==0
-                    d = randi(6);
-                    car_direction(j) = directionE(d);
-                    if direction(d) == 'r'
-                        car_y(j) = car_y(j) + v;
-                        car_x(j) = 0;
-                    elseif direction(d) == 'l'
-                        car_y(j) = car_y(j) - v;
-                        car_x(j) = 0;
-                    else
-                        car_x(j) = car_x(j) + v;
-                    end
                 else
                     car_x(j) = car_x(j) + v;
                 end
@@ -473,7 +305,6 @@ for i=1:86400
             car_y(carnum) = entryY(j);
             car_direction(carnum) = entryD(j);
             car_in(carnum) = 1;
-            car_NewPower(carnum) = Pmin;
             
             % choose BS
             % direction to BS
